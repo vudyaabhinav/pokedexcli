@@ -1,3 +1,3 @@
-module github.com/vudyaabhinav/pokedexcli
+module github.com/vudyaabbhinav/pokedexcli
 
 go 1.20
