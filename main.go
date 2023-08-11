@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	c "github.com/vudyaabbhinav/pokedexcli/commands"
 	helpers "github.com/vudyaabbhinav/pokedexcli/helpers"
 )
 
@@ -19,7 +20,7 @@ func main() {
 			return
 		}
 
-		if command, ok := helpers.Commands[text]; ok {
+		if command, ok := c.Commands[text]; ok {
 			command.Callback()
 		} else {
 			helpers.PrintUnknown(text)
