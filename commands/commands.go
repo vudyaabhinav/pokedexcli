@@ -1,9 +1,12 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+
+	pokeapi "github.com/vudyaabhinav/pokedexcli/pokeapi"
 )
 
 type cliCommand struct {
@@ -37,7 +40,7 @@ var Commands map[string]cliCommand = map[string]cliCommand{
 	},
 }
 
-func displayHelp() error {
+func displayHelp(cfg *pokeapi.config) error {
 	fmt.Printf(
 		"Welcome to %v! These are the available commands: \n",
 		CliName,
@@ -49,17 +52,45 @@ func displayHelp() error {
 	return nil
 }
 
-func clearScreen() error {
+func clearScreen(cfg *pokeapi.config) error {
 	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
 	cmd.Run()
 	return nil
 }
 
-func getMapLocations() error {
+func getMapLocations(cfg *pokeapi.config) error {
+	// locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationsURL)
+	locationsResp, err := pokeapi.ListLocations(cfg.nextLocationsURL)
+	if err != nil {
+		return err
+	}
+
+	cfg.nextLocationsURL = locationsResp.Next
+	cfg.prevLocationsURL = locationsResp.Previous
+
+	for _, loc := range locationsResp.Results {
+		fmt.Println(loc.Name)
+	}
 	return nil
 }
 
-func mapb() error {
+func mapb(cfg *pokeapi.config) error {
+	if cfg.prevLocationsURL == nil {
+		return errors.New("you're on the first page")
+	}
+
+	// locationResp, err := cfg.pokeapiClient.ListLocations(cfg.prevLocationsURL)
+	locationResp, err := pokeapi.ListLocations(cfg.prevLocationsURL)
+	if err != nil {
+		return err
+	}
+
+	cfg.nextLocationsURL = locationResp.Next
+	cfg.prevLocationsURL = locationResp.Previous
+
+	for _, loc := range locationResp.Results {
+		fmt.Println(loc.Name)
+	}
 	return nil
 }

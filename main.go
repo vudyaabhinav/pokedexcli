@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	c "github.com/vudyaabbhinav/pokedexcli/commands"
 	helpers "github.com/vudyaabbhinav/pokedexcli/helpers"
+	pokeapi "github.com/vudyaabbhinav/pokedexcli/pokeapi"
 )
 
 func main() {
@@ -21,7 +23,12 @@ func main() {
 		}
 
 		if command, ok := c.Commands[text]; ok {
-			command.Callback()
+			pokeClient := pokeapi.NewClient(5 * time.Second)
+			// cfg := &pokeapi.config{
+			cfg := &pokeapi.config{
+				// pokeapiClient: pokeClient,
+			}
+			command.Callback(cfg)
 		} else {
 			helpers.PrintUnknown(text)
 		}
